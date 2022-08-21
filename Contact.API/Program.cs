@@ -15,6 +15,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ContactContext>(option => option.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSQLConnection")));
 builder.Services.AddScoped<IPersonRepository, PersonService>();
+builder.Services.AddScoped<IContactInformationRepository, ContactInformationService>();
 builder.Services.AddHttpClient();
 
 var app = builder.Build();

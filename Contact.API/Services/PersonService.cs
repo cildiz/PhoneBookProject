@@ -70,14 +70,69 @@ namespace Contact.API.Services
             };
         }
 
-        public Task<IQueryable<PersonModel>> GetAllPersons()
+        public async Task<ReturnModel> GetAllPersons()
         {
-            throw new NotImplementedException();
+            var result= await _context.Persons.Select(p => new PersonModel
+            {
+                UUID = p.UUID,
+                Name = p.Name,
+                Surname = p.Surname,
+                Company = p.Company,
+            }).ToListAsync();
+
+            if (result.Count==0)
+            {
+                return new ReturnModel
+                {
+                    IsSuccess = false,
+                    Message = "Listelenecek kişi kaydı bulunamadı.",
+                    Model = null
+                };
+            }
+
+            return new ReturnModel
+            {
+                IsSuccess = true,
+                Message = "Kişi kayıtları başarılı bir şekilde listelendi.",
+                Model = result
+            };
         }
 
-        public Task<PersonDetailModel> GetPersonDetail(Guid uuid)
+        public async Task<ReturnModel> GetPersonDetail(Guid uuid)
         {
-            throw new NotImplementedException();
+            var result = await _context.Persons.Where(p => p.UUID == uuid).Select(p => new PersonDetailModel
+            {
+                Person = new PersonModel()
+                {
+                    UUID = p.UUID,
+                    Name = p.Name,
+                    Surname = p.Surname,
+                    Company = p.Company
+                },
+                ContactInformations = p.ContactInformations.Select(ci => new ContactInformationModel
+                {
+                    UUID = ci.UUID,
+                    InformationType = ci.InformationType,
+                    InformationContent = ci.InformationContent
+                }).ToList()
+            }).FirstOrDefaultAsync();
+
+            if (result == null)
+            {
+                return new ReturnModel
+                {
+                    IsSuccess = false,
+                    Message = "Kişi bulunamadı.",
+                    Model = null
+                };
+            }
+
+            return new ReturnModel
+            {
+                IsSuccess = true,
+                Message = "Kişinin detayı başarılı bir şekilde getirildi.",
+                Model = result
+            };
         }
     }
 }

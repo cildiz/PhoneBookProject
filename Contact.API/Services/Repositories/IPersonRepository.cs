@@ -9,9 +9,9 @@ namespace Contact.API.Services.Repositories
 
         Task<ReturnModel> DeletePerson(Guid uuid);
 
-        Task<IQueryable<PersonModel>> GetAllPersons();
+        Task<ReturnModel> GetAllPersons();
 
-        Task<PersonDetailModel> GetPersonDetail(Guid uuid);
+        Task<ReturnModel> GetPersonDetail(Guid uuid);
 
     }
 }
