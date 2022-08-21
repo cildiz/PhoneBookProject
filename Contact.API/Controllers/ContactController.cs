@@ -59,7 +59,7 @@ namespace Contact.API.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<IEnumerable<PersonModel>>> GetAllPersons()
+        public async Task<ActionResult<ReturnModel>> GetAllPersons()
         {
             var result = await _personRepository.GetAllPersons();
 
@@ -108,7 +108,7 @@ namespace Contact.API.Controllers
         }
 
         [HttpGet("ContactInformations")]
-        public async Task<ActionResult<IEnumerable<ContactInformationModel>>> GetAllContactInformations()
+        public async Task<ActionResult<ReturnModel>> GetAllContactInformations()
         {
             var result = await _contactInformationRepository.GetAllContactInformations();
 
