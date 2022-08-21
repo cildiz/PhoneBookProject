@@ -1,5 +1,7 @@
 using Contact.API.Contexts;
 using Contact.API.Middlewares;
+using Contact.API.Services;
+using Contact.API.Services.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 
@@ -12,6 +14,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ContactContext>(option => option.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSQLConnection")));
+builder.Services.AddScoped<IPersonRepository, PersonService>();
 builder.Services.AddHttpClient();
 
 var app = builder.Build();

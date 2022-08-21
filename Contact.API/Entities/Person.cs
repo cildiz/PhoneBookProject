@@ -1,14 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Contact.API.Entities.Base;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Contact.API.Entities
 {
     [Table("Persons")]
-    public class Person
+    public class Person : BaseEntity
     {
-        [Key]
-        [Required]
-        public Guid UUID { get; set; }
         public string Name { get; set; }
         public string Surname { get; set; }
         public string Company { get; set; }
