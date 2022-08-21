@@ -10,6 +10,6 @@ namespace Contact.API.Entities
     {
         public Guid PersonUUID { get; set; }
         public InformationType InformationType { get; set; }
-        public string InformationContent { get; set; }
+        public string InformationContent { get; set; } = "";
     }
 }

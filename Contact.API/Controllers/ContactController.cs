@@ -38,5 +38,20 @@ namespace Contact.API.Controllers
                 return BadRequest(result.Message);
             }
         }
+
+        [HttpDelete("{uuid}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<ReturnModel>> DeletePerson([FromRoute] Guid uuid)
+        {
+            var result = await _personRepository.DeletePerson(uuid);
+
+            if (!result.IsSuccess)
+            {
+                return NotFound(result.Message);
+            }
+
+            return Ok(result);
+        }
     }
 }

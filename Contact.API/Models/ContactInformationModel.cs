@@ -6,7 +6,7 @@ namespace Contact.API.Models
     {
         public Guid UUID { get; set; }
         public InformationType InformationType { get; set; }
-        public string InformationContent { get; set; }
+        public string InformationContent { get; set; } = "";
         public Guid PersonId { get; set; }
     }
 }
