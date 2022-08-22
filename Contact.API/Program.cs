@@ -19,12 +19,14 @@ builder.Services.AddScoped<IContactInformationRepository, ContactInformationServ
 builder.Services.AddHttpClient();
 
 var app = builder.Build();
+app.Services.CreateScope().ServiceProvider.GetRequiredService<ContactContext>().Database.Migrate();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseDeveloperExceptionPage();
+    app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "test v1"));
 }
 
 app.UseMiddleware<ExceptionMiddleware>();
