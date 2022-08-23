@@ -7,5 +7,6 @@ namespace Report.API.Models
         public Guid UUID { get; set; }
         public DateTime Date { get; set; }
         public ReportStatus ReportStatus { get; set; }
+        public string FilePath { get; set; }
     }
 }

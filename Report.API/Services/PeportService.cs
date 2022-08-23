@@ -9,23 +9,21 @@ using Report.API.Enumerables;
 using Report.API.Models;
 using Report.API.Services.Base;
 using Report.API.Services.Repositories;
-using System.Net.Http;
 using System.Text;
-using System.Xml.Serialization;
 
 namespace Contact.API.Services
 {
     public class PeportService : BaseService, IPeportRepository
     {
-        private readonly ReportContext _context;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly ReportSettings _reportSettings;
+        private IWebHostEnvironment _hostEnvironment;
 
-        public PeportService(ReportContext context, IHttpClientFactory httpClientFactory, IOptions<ReportSettings> reportSettings) : base(context)
+        public PeportService(ReportContext context, IHttpClientFactory httpClientFactory, IOptions<ReportSettings> reportSettings, IWebHostEnvironment webHostEnvironment) : base(context)
         {
-            _context = context;
             _httpClientFactory = httpClientFactory;
             _reportSettings = reportSettings?.Value;
+            _hostEnvironment = webHostEnvironment;
         }
 
         public async Task<ReturnModel> CreateReportRequest()
@@ -63,23 +61,32 @@ namespace Contact.API.Services
             var report = await _context.Reports.Where(x => x.UUID == uuid).FirstOrDefaultAsync();
 
             var client = _httpClientFactory.CreateClient();
-            var request = new HttpRequestMessage(HttpMethod.Get, $"{_reportSettings.PhoneBookApiUrl}/Person/ContactInformations");
+            var request = new HttpRequestMessage(HttpMethod.Get, $"{_reportSettings.ApiUrl}/Contact/ContactInformations");
             var response = await client.SendAsync(request);
 
             var responseStream = await response.Content.ReadAsStringAsync();
-            var contactInformations = JsonConvert.DeserializeObject<IEnumerable<ContactInformationModel>>(responseStream);
 
-            var statisticsReport = contactInformations.Where(x => x.InformationType == 2).Select(x => x.InformationContent).Distinct().Select(x => new ReportDetail
+            if (responseStream != null && responseStream!="")
             {
-                ReportUUID = uuid,
-                Location = x,
-                PersonCount = contactInformations.Where(y => y.InformationType == 2 && y.InformationContent == x).Count(),
-                PhoneNumberCount = contactInformations.Where(y => y.InformationType == 0 && contactInformations.Where(y => y.InformationType == 2 && y.InformationContent == x).Select(x => x.PersonUUID).Contains(y.PersonUUID)).Count()
-            });
-            report.ReportStatus = ReportStatus.Completed;
+                var contactInformations = JsonConvert.DeserializeObject<IEnumerable<ContactInformationModel>>(JsonConvert.SerializeObject((JsonConvert.DeserializeObject<ReturnModel>(responseStream)).Model));
 
-            await _context.ReportDetails.AddRangeAsync(statisticsReport);
-            await _context.SaveChangesAsync();
+                var statisticsReport = contactInformations.Where(x => x.InformationType == 2).Select(x => x.InformationContent).Distinct().Select(x => new ReportDetail
+                {
+                    ReportUUID = uuid,
+                    Location = x,
+                    PersonCount = contactInformations.Where(y => y.InformationType == 2 && y.InformationContent == x).Count(),
+                    PhoneNumberCount = contactInformations.Where(y => y.InformationType == 0 && contactInformations.Where(y => y.InformationType == 2 && y.InformationContent == x).Select(x => x.PersonUUID).Contains(y.PersonUUID)).Count()
+                });
+
+                if (statisticsReport.ToList().Count > 0)
+                {
+                    report.FilePath = CreateReportFile(statisticsReport);
+                }
+                report.ReportStatus = ReportStatus.Completed;
+
+                await _context.ReportDetails.AddRangeAsync(statisticsReport);
+                await _context.SaveChangesAsync();
+            }
         }
 
         public async Task<ReturnModel> GetAllReports()
@@ -88,7 +95,8 @@ namespace Contact.API.Services
             {
                 UUID = r.UUID,
                 Date=r.Date,
-                ReportStatus = r.ReportStatus
+                ReportStatus = r.ReportStatus,
+                FilePath = r.FilePath
             }).ToListAsync();
 
 
@@ -119,6 +127,7 @@ namespace Contact.API.Services
                  {
                      UUID = uuid,
                      ReportStatus = r.ReportStatus,
+                     FilePath = r.FilePath,
                      Date = r.Date
                  },
                  ReportDetails = r.ReportDetails.Select(rd => new StatisticModel()
@@ -170,6 +179,23 @@ namespace Contact.API.Services
 
             channel.BasicPublish(documentCreateExchange, createDocumentQueue, null, Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(model)));
 
+        }
+
+        public string CreateReportFile(IEnumerable<ReportDetail> reportDetailList)
+        {
+            var builder = new StringBuilder();
+            builder.AppendLine("ReportId;Location;PersonCount;PhoneNumberCount");
+
+            foreach (var reportRecord in reportDetailList)
+            {
+                builder.AppendLine($"{reportRecord.ReportUUID};{reportRecord.Location};{reportRecord.PersonCount};{reportRecord.PhoneNumberCount}");
+            }
+            var path = Path.Combine(_hostEnvironment.ContentRootPath, "RAPOR_" + Guid.NewGuid() + ".csv");
+            File.WriteAllText(path , builder.ToString());
+
+            builder.Clear();
+
+            return path;
         }
     }
 }

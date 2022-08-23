@@ -9,6 +9,7 @@ namespace Report.API.Entities
     {
         public DateTime Date { get; set; }
         public ReportStatus ReportStatus { get; set; }
+        public string FilePath { get; set; } = "";
         public virtual List<ReportDetail>? ReportDetails { get; set; }
     }
 }
