@@ -1,7 +1,9 @@
 using Contact.API.Services;
 using Microsoft.EntityFrameworkCore;
+using Report.API.Constants;
 using Report.API.Contexts;
 using Report.API.Middlewares;
+using Report.API.ServiceExtensions;
 using Report.API.Services.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -13,9 +15,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ReportContext>(option => option.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSQLConnection")));
+builder.Services.Configure<ReportSettings>(builder.Configuration.GetSection("Options"));
 builder.Services.AddScoped<IPeportRepository, PeportService>();
 builder.Services.AddHttpClient();
-
 
 var app = builder.Build();
 app.Services.CreateScope().ServiceProvider.GetRequiredService<ReportContext>().Database.Migrate();
@@ -27,6 +29,8 @@ if (app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
     app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "test v1"));
 }
+
+app.UseRabbitMq();
 
 app.UseMiddleware<ExceptionMiddleware>();
 

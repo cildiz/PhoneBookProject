@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Contact.API.Services;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using Report.API.Constants;
 using Report.API.Models;
 using Report.API.Services.Repositories;
 
@@ -8,11 +11,13 @@ namespace Report.API.Controllers
     [ApiController]
     public class ReportController : ControllerBase
     {
+        private readonly ReportSettings _reportSettings;
         private readonly IPeportRepository _reportRepository;
 
-        public ReportController(IPeportRepository reportRepository)
+        public ReportController(IPeportRepository reportRepository, IOptions<ReportSettings> reportSettings)
         {
             _reportRepository = reportRepository;
+            _reportSettings = reportSettings?.Value;
         }
 
         [HttpPut("Request")]
@@ -24,7 +29,13 @@ namespace Report.API.Controllers
 
             if (result.IsSuccess)
             {
-                return Ok(result);
+                var model = new ReportRequestModel()
+                {
+                    ReportId = ((Report.API.Entities.Report)result.Model).UUID
+                };
+
+                await _reportRepository.CreateRabbitMQPublisher(model, _reportSettings);
+                return Accepted("", result);
             }
             else
             {

@@ -1,17 +1,31 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
+using RabbitMQ.Client;
+using Report.API.Constants;
 using Report.API.Contexts;
 using Report.API.Entities;
 using Report.API.Enumerables;
 using Report.API.Models;
 using Report.API.Services.Base;
 using Report.API.Services.Repositories;
+using System.Net.Http;
+using System.Text;
+using System.Xml.Serialization;
 
 namespace Contact.API.Services
 {
     public class PeportService : BaseService, IPeportRepository
     {
-        public PeportService(ReportContext context) : base(context)
+        private readonly ReportContext _context;
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly ReportSettings _reportSettings;
+
+        public PeportService(ReportContext context, IHttpClientFactory httpClientFactory, IOptions<ReportSettings> reportSettings) : base(context)
         {
+            _context = context;
+            _httpClientFactory = httpClientFactory;
+            _reportSettings = reportSettings?.Value;
         }
 
         public async Task<ReturnModel> CreateReportRequest()
@@ -42,6 +56,30 @@ namespace Contact.API.Services
                 Message = "Rapor isteği başarılı bir şekilde eklendi.",
                 Model = report
             };
+        }
+
+        public async Task GenerateStatisticsReport(Guid uuid)
+        {
+            var report = await _context.Reports.Where(x => x.UUID == uuid).FirstOrDefaultAsync();
+
+            var client = _httpClientFactory.CreateClient();
+            var request = new HttpRequestMessage(HttpMethod.Get, $"{_reportSettings.PhoneBookApiUrl}/Person/ContactInformations");
+            var response = await client.SendAsync(request);
+
+            var responseStream = await response.Content.ReadAsStringAsync();
+            var contactInformations = JsonConvert.DeserializeObject<IEnumerable<ContactInformationModel>>(responseStream);
+
+            var statisticsReport = contactInformations.Where(x => x.InformationType == 2).Select(x => x.InformationContent).Distinct().Select(x => new ReportDetail
+            {
+                ReportUUID = uuid,
+                Location = x,
+                PersonCount = contactInformations.Where(y => y.InformationType == 2 && y.InformationContent == x).Count(),
+                PhoneNumberCount = contactInformations.Where(y => y.InformationType == 0 && contactInformations.Where(y => y.InformationType == 2 && y.InformationContent == x).Select(x => x.PersonUUID).Contains(y.PersonUUID)).Count()
+            });
+            report.ReportStatus = ReportStatus.Completed;
+
+            await _context.ReportDetails.AddRangeAsync(statisticsReport);
+            await _context.SaveChangesAsync();
         }
 
         public async Task<ReturnModel> GetAllReports()
@@ -108,6 +146,30 @@ namespace Contact.API.Services
                 Message = "Raporun detayı başarılı bir şekilde getirildi.",
                 Model = result
             };
+        }
+
+        public async Task CreateRabbitMQPublisher(ReportRequestModel model, ReportSettings reportSettings)
+        {
+            var conn = reportSettings.RabbitMqCon;
+
+            var createDocumentQueue = "create_document_queue";
+            var documentCreateExchange = "document_create_exchange";
+
+            ConnectionFactory connectionFactory = new()
+            {
+                Uri = new Uri(conn)
+            };
+
+            var connection = connectionFactory.CreateConnection();
+
+            var channel = connection.CreateModel();
+            channel.ExchangeDeclare(documentCreateExchange, "direct");
+
+            channel.QueueDeclare(createDocumentQueue, false, false, false);
+            channel.QueueBind(createDocumentQueue, documentCreateExchange, createDocumentQueue);
+
+            channel.BasicPublish(documentCreateExchange, createDocumentQueue, null, Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(model)));
+
         }
     }
 }
