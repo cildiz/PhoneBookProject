@@ -53,9 +53,9 @@ docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3.9-man
    > **NOT:** Projeler **IIS** üzerinden ayağa kaldırılacaksa eğer **4**. ve **5.** maddelerde değişiklik yapmanıza gerek yoktur.
 6.  **Contact.API** klasörü içerisinde bir **terminal** açıp aşağıdaki komut ile **Contact.API** projesini çalıştırabilirsiniz.
 
-   ```bash
-   dotnet run
-   ```
+      ```bash
+      dotnet run
+      ```
 
 7. **Report.API** klasörü içerisinde bir **terminal** açıp aşağıdaki komut ile **Report.API** projesini çalıştırabilirsiniz.
 
