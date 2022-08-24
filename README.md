@@ -4,7 +4,7 @@ Rise Technology firmasının assessment projesidir.Uygulama microservis mimarisi
 
 - Minimum Contact ve Person olmak üzere 2 micro servis olmalıdır.
 - Contact micro servisinde kişilere ait temel CRUD işlemleri yapılamtadır. Ayrıca kişilere ait iletişim bilgileride ayrıca tutulmaktadır. Bir kişinin 1'e N ilişkili iletişim bilgisi olabilir. Ayrıca bu iletişim bilgileri içinde CRUD işlemleri yapılabiliyor.
-- Report micro servisinde rapor oluşturma talebi, raparun detaylarını görüntüleme ve tüm raporları listeleme özellikleri sağlanmaktadır. Ek olarak rapor oluşturma talebinden sonra rapor oluşturma süreci mesaj kuyruğq kullanan bir yapı ile arkaplan işlemi olarak devam edecektir. Diğer micro servis ile iletişimi HTTP veya AMQ üzerinden yapacaktır.
+- Report micro servisinde rapor oluşturma talebi, raparun detaylarını görüntüleme ve tüm raporları listeleme özellikleri sağlanmaktadır. Ek olarak rapor oluşturma talebinden sonra rapor oluşturma süreci mesaj kuyruğu kullanan bir yapı ile arkaplan işlemi olarak devam edecektir. Diğer micro servis ile iletişimi HTTP veya AMQ üzerinden yapacaktır.
 
 # Kullanılan Teknolojiler
 
@@ -46,9 +46,9 @@ docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3.9-man
    
          **NOT:** Default ayarlarla kullanmak isterseniz eğer değişiklik yapmanıza gerek yoktur.
    
-4. **Contact.API** için **Contact.API** içerisinde bulunan **appsettings.json** dosyasındaki **ApiUrl** bilgisini kendinize uygun şekilde düzenleyiniz.
+4. **Contact.API** için **Report.API** içerisinde bulunan **appsettings.json** dosyasındaki **ApiUrl** bilgisini kendinize uygun şekilde düzenleyiniz.
    
-5. **Report.API** için **PhoneBook.API** içerisinde bulunan **appsettings.json** dosyasındaki **ApiUrl** bilgisini kendinize uygun şekilde düzenleyiniz.
+5. **Report.API** için **Contact.API** içerisinde bulunan **appsettings.json** dosyasındaki **ApiUrl** bilgisini kendinize uygun şekilde düzenleyiniz.
 
    > **NOT:** Projeler **IIS** üzerinden ayağa kaldırılacaksa eğer **4**. ve **5.** maddelerde değişiklik yapmanıza gerek yoktur.
 6.  **Contact.API** klasörü içerisinde bir **terminal** açıp aşağıdaki komut ile **Contact.API** projesini çalıştırabilirsiniz.
