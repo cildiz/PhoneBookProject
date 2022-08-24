@@ -1,9 +1,10 @@
-# PhoneBook
+# PhoneBookProject
 
-Birbirleriyle HTTP ve AMQ protokolleri üzerinden haberleşen iki microservice'in oluşturduğu bir telefon rehberi uygulamasıdır.
+Rise Technology firmasının assessment projesidir.Uygulama microservis mimarisiyle tasarlanmış bir telefon rehberi uygulamasıdır. Çalışmadan beklenenler genel mimari :
 
-> Not: Rise Technology firmasının Back-End Assetment'ıdır.
-
+- Minimum Contact ve Person olmak üzere 2 micro servis olmalıdır.
+- Contact micro servisinde kişilere ait temel CRUD işlemleri yapılamtadır. Ayrıca kişilere ait iletişim bilgileride ayrıca tutulmaktadır. Bir kişinin 1'e N ilişkili iletişim bilgisi olabilir. Ayrıca bu iletişim bilgileri içinde CRUD işlemleri yapılabiliyor.
+- Report micro servisinde rapor oluşturma talebi, raparun detaylarını görüntüleme ve tüm raporları listeleme özellikleri sağlanmaktadır. Ek olarak rapor oluşturma talebinden sonra rapor oluşturma süreci mesaj kuyruğq kullanan bir yapı ile arkaplan işlemi olarak devam edecektir. Diğer micro servis ile iletişimi HTTP veya AMQ üzerinden yapacaktır.
 
 # Kullanılan Teknolojiler
 
@@ -11,17 +12,17 @@ Birbirleriyle HTTP ve AMQ protokolleri üzerinden haberleşen iki microservice'i
 
 - [Entity Framework Core 6](https://docs.microsoft.com/en-us/ef/core/)
 
-- [Docker](https://www.docker.com/)
+- [PostGreSQL](https://www.postgresql.org/)
 
 - [RabbitMQ](https://www.rabbitmq.com/)
+
+- [Docker](https://www.docker.com/)
 
 - [xUnit](https://xunit.net/)
 
 - [Moq](https://github.com/moq)
 
 - [Coverlet](https://github.com/coverlet-coverage/coverlet)
-
-
 
 # Başlarken
 
@@ -32,12 +33,12 @@ docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3.9-man
 ```
 
 2. [**PostgreSQL**](https://www.postgresql.org/)'nin bilgisayarınızda yüklü olduğundan emin olunuz. Ardından aşağıdaki adımları uygulayınız.
-   1. **PhoneBook.API** içerisinde bulunan **appsettings.json** dosyasındaki **"ConnectionStrings"** içerisinde bulunan **User ID**, **Password** ve **Host** bilgilerini kendinize uygun şekilde düzenleyeniz.
+   1. **Contact.API** içerisinde bulunan **appsettings.json** dosyasındaki **"ConnectionStrings"** içerisinde bulunan **User ID**, **Password** ve **Host** bilgilerini kendinize uygun şekilde düzenleyeniz.
    2. **Report.API** içerisinde bulunan **appsettings.json** dosyasındaki **"ConnectionStrings"** içerisinde bulunan **User ID**, **Password** ve **Host** bilgilerini kendinize uygun şekilde düzenleyeniz.
 
 3. **RabbitMQ** bağlantı bilgisini kendinize göre düzenlemek isterseniz eğer aşağıdaki adımları uygulayınız. 
 
-   1. **PhoneBook.API** içerisinde bulunan **appsettings.json** dosyasındaki **"Options"** içerisinde bulunan **RabbitMqCon** bilgisini kendinize uygun şekilde düzenleyeniz.
+   1. **Contact.API** içerisinde bulunan **appsettings.json** dosyasındaki **"Options"** içerisinde bulunan **RabbitMqCon** bilgisini kendinize uygun şekilde düzenleyeniz.
 
       **NOT:** Default ayarlarla kullanmak isterseniz eğer değişiklik yapmanıza gerek yoktur.
    
@@ -45,12 +46,12 @@ docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3.9-man
    
          **NOT:** Default ayarlarla kullanmak isterseniz eğer değişiklik yapmanıza gerek yoktur.
    
-4. **PhoneBook.API** için **Report.API** içerisinde bulunan **appsettings.json** dosyasındaki **PhoneBookApiUrl** bilgisini kendinize uygun şekilde düzenleyiniz.
+4. **Contact.API** için **Contact.API** içerisinde bulunan **appsettings.json** dosyasındaki **ApiUrl** bilgisini kendinize uygun şekilde düzenleyiniz.
    
-5. **Report.API** için **PhoneBook.API** içerisinde bulunan **appsettings.json** dosyasındaki **ReportApiUrl** bilgisini kendinize uygun şekilde düzenleyiniz.
+5. **Report.API** için **PhoneBook.API** içerisinde bulunan **appsettings.json** dosyasındaki **ApiUrl** bilgisini kendinize uygun şekilde düzenleyiniz.
 
    > **NOT:** Projeler **IIS** üzerinden ayağa kaldırılacaksa eğer **4**. ve **5.** maddelerde değişiklik yapmanıza gerek yoktur.
-6.  **PhoneBook.API** klasörü içerisinde bir **terminal** açıp aşağıdaki komut ile **PhoneBook.API** projesini çalıştırabilirsiniz.
+6.  **Contact.API** klasörü içerisinde bir **terminal** açıp aşağıdaki komut ile **Contact.API** projesini çalıştırabilirsiniz.
 
    ```bash
    dotnet run
@@ -65,19 +66,11 @@ docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3.9-man
 8. Projeler varsayılan ayarlar ile derlenip, çalıştırıldığında aşağıdaki url'ler üzerinden **swagger** arayüzüne ulaşabilirsiniz.
 
       ```
-      PhoneBook.API Url: https://localhost:7131/swagger/index.html
-      Report.API Url   : https://localhost:7047/swagger/index.html
+      Contact.API Url: https://localhost:7136/swagger/index.html
+      Report.API Url   : https://localhost:7183/swagger/index.html
       ```
-
-
-
-# Proje Mimarisi Genel Bakış
-
-![phone_book_diagrams](readme-soruces/phone_book_diagrams.jpg)
-
-
 
 # Unit Test Code Coverage Sonuçları
 
-![code_coverage](readme-soruces/code_coverage.png)
+![image](https://user-images.githubusercontent.com/39311748/186542282-993623ef-da44-4584-9f8f-f86b30d6b580.png)
 
