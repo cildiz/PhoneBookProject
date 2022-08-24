@@ -11,15 +11,15 @@ using Report.API.Services.Base;
 using Report.API.Services.Repositories;
 using System.Text;
 
-namespace Contact.API.Services
+namespace Report.API.Services
 {
-    public class PeportService : BaseService, IPeportRepository
+    public class ReportService : BaseService, IReportRepository
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly ReportSettings _reportSettings;
         private IWebHostEnvironment _hostEnvironment;
 
-        public PeportService(ReportContext context, IHttpClientFactory httpClientFactory, IOptions<ReportSettings> reportSettings, IWebHostEnvironment webHostEnvironment) : base(context)
+        public ReportService(ReportContext context, IHttpClientFactory httpClientFactory, IOptions<ReportSettings> reportSettings, IWebHostEnvironment webHostEnvironment) : base(context)
         {
             _httpClientFactory = httpClientFactory;
             _reportSettings = reportSettings?.Value;
@@ -31,7 +31,8 @@ namespace Contact.API.Services
             var report = new Report.API.Entities.Report
             {
                 Date = DateTime.UtcNow,
-                ReportStatus = ReportStatus.Preparing
+                ReportStatus = ReportStatus.Preparing,
+                FilePath = ""
             };
 
             await _context.Reports.AddAsync(report);
@@ -190,7 +191,7 @@ namespace Contact.API.Services
             {
                 builder.AppendLine($"{reportRecord.ReportUUID};{reportRecord.Location};{reportRecord.PersonCount};{reportRecord.PhoneNumberCount}");
             }
-            var path = Path.Combine(_hostEnvironment.ContentRootPath, "RAPOR_" + Guid.NewGuid() + ".csv");
+            var path = Path.Combine(_hostEnvironment.ContentRootPath, "REPORT_" + Guid.NewGuid() + ".csv");
             File.WriteAllText(path , builder.ToString());
 
             builder.Clear();

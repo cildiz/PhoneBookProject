@@ -1,9 +1,9 @@
-using Contact.API.Services;
 using Microsoft.EntityFrameworkCore;
 using Report.API.Constants;
 using Report.API.Contexts;
 using Report.API.Middlewares;
 using Report.API.ServiceExtensions;
+using Report.API.Services;
 using Report.API.Services.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -16,7 +16,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ReportContext>(option => option.UseNpgsql(builder.Configuration.GetConnectionString("PostgreSQLConnection")));
 builder.Services.Configure<ReportSettings>(builder.Configuration.GetSection("Options"));
-builder.Services.AddScoped<IPeportRepository, PeportService>();
+builder.Services.AddScoped<IReportRepository, ReportService>();
 builder.Services.AddHttpClient();
 
 var app = builder.Build();

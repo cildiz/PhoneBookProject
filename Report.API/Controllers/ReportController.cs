@@ -1,5 +1,4 @@
-﻿using Contact.API.Services;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Report.API.Constants;
 using Report.API.Models;
@@ -12,9 +11,9 @@ namespace Report.API.Controllers
     public class ReportController : ControllerBase
     {
         private readonly ReportSettings _reportSettings;
-        private readonly IPeportRepository _reportRepository;
+        private readonly IReportRepository _reportRepository;
 
-        public ReportController(IPeportRepository reportRepository, IOptions<ReportSettings> reportSettings)
+        public ReportController(IReportRepository reportRepository, IOptions<ReportSettings> reportSettings)
         {
             _reportRepository = reportRepository;
             _reportSettings = reportSettings?.Value;

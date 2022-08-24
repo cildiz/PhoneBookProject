@@ -37,7 +37,7 @@ namespace Report.API.ServiceExtensions
 
             consumerEvent.Received += (ch, ea) =>
             {
-                var reportService = app.ApplicationServices.CreateScope().ServiceProvider.GetRequiredService<IPeportRepository>();
+                var reportService = app.ApplicationServices.CreateScope().ServiceProvider.GetRequiredService<IReportRepository>();
                 var incomingModel = JsonConvert.DeserializeObject<ReportRequestModel>(Encoding.UTF8.GetString(ea.Body.ToArray()));
                 Console.WriteLine("Data received");
                 Console.WriteLine($"Received Id: {incomingModel.ReportId}");

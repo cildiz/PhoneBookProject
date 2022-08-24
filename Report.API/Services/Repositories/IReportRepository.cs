@@ -3,7 +3,7 @@ using Report.API.Models;
 
 namespace Report.API.Services.Repositories
 {
-    public interface IPeportRepository
+    public interface IReportRepository
     {
         Task<ReturnModel> CreateReportRequest();
         Task<ReturnModel> GetAllReports();
