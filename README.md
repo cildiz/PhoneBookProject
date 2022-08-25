@@ -2,7 +2,7 @@
 
 Rise Technology firmasının assessment projesidir.Uygulama microservis mimarisiyle tasarlanmış bir telefon rehberi uygulamasıdır. Çalışmadan beklenenler genel mimari :
 
-- Minimum Contact ve Person olmak üzere 2 micro servis olmalıdır.
+- Minimum, Contact ve Person olmak üzere 2 micro servis olmalıdır.
 - Contact micro servisinde kişilere ait temel CRUD işlemleri yapılamtadır. Ayrıca kişilere ait iletişim bilgileride ayrıca tutulmaktadır. Bir kişinin 1'e N ilişkili iletişim bilgisi olabilir. Ayrıca bu iletişim bilgileri içinde CRUD işlemleri yapılabiliyor.
 - Report micro servisinde rapor oluşturma talebi, raparun detaylarını görüntüleme ve tüm raporları listeleme özellikleri sağlanmaktadır. Ek olarak rapor oluşturma talebinden sonra rapor oluşturma süreci mesaj kuyruğu kullanan bir yapı ile arkaplan işlemi olarak devam edecektir. Diğer micro servis ile iletişimi HTTP veya AMQ üzerinden yapacaktır.
 
