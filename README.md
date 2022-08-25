@@ -1,6 +1,6 @@
 # PhoneBookProject
 
-Rise Technology firmasının assessment projesidir.Uygulama microservis mimarisiyle tasarlanmış bir telefon rehberi uygulamasıdır. Çalışmadan beklenenler genel mimari :
+Rise Technology firmasının assessment projesidir. Uygulama microservis mimarisiyle tasarlanmış bir telefon rehberi uygulamasıdır. Çalışmadan beklenen genel yapı :
 
 - Minimum, Contact ve Person olmak üzere 2 micro servis olmalıdır.
 - Contact micro servisinde kişilere ait temel CRUD işlemleri yapılamtadır. Ayrıca kişilere ait iletişim bilgileride ayrıca tutulmaktadır. Bir kişinin 1'e N ilişkili iletişim bilgisi olabilir. Ayrıca bu iletişim bilgileri içinde CRUD işlemleri yapılabiliyor.
