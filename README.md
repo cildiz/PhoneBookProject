@@ -72,5 +72,11 @@ docker run -it --rm --name rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3.9-man
 
 # Unit Test Code Coverage Sonuçları
 
-![image](https://user-images.githubusercontent.com/39311748/186542282-993623ef-da44-4584-9f8f-f86b30d6b580.png)
+![image](https://raw.githubusercontent.com/cildiz/EducationManagementSystem/master/EducationManagementSystem.WebAPI/screenshots/ss1.PNG)
+
+
+![image](https://raw.githubusercontent.com/cildiz/EducationManagementSystem/master/EducationManagementSystem.WebAPI/screenshots/ss2.PNG)
+
+
+![image](https://raw.githubusercontent.com/cildiz/EducationManagementSystem/master/EducationManagementSystem.WebAPI/screenshots/ss3.PNG)
 
